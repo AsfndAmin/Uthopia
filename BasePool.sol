@@ -19,6 +19,7 @@ abstract contract BasePool is AbstractRewards, IBasePool {
     IERC721 public immutable nftToken;
 
     mapping(uint256 => uint256) NftWeightage;
+    mapping(uint256 => bool) public restricted;
     uint256 totalNftWeightage;
 
     event RewardsClaimed(address indexed _receiver, uint256 rewardClaimed);
@@ -56,6 +57,7 @@ abstract contract BasePool is AbstractRewards, IBasePool {
             nftToken.ownerOf(tokenId) == msg.sender,
             "caller is not the owner"
         );
+        require(restricted[tokenId] == false, "you are restricted sorry for inconvenience");
         uint256 rewardAmount = _prepareCollect(tokenId);
 
         // if rewards exist
@@ -66,3 +68,5 @@ abstract contract BasePool is AbstractRewards, IBasePool {
         emit RewardsClaimed(msg.sender, rewardAmount);
     }
 }
+// mapping tokenid(uint256) to bool, admin can enter the address,true the added address
+//function should work if bool is false
