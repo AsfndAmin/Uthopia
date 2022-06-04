@@ -68,5 +68,4 @@ abstract contract BasePool is AbstractRewards, IBasePool {
         emit RewardsClaimed(msg.sender, rewardAmount);
     }
 }
-// mapping tokenid(uint256) to bool, admin can enter the address,true the added address
-//function should work if bool is false
+
