@@ -18,13 +18,13 @@ abstract contract AbstractRewards is IAbstractRewards {
 
     /* ========  Storage  ======== */
     uint256 public pointsPerShare;
+    uint256 private cmReward;
     mapping(uint256 => int256) public pointsCorrection;
     mapping(uint256 => uint256) public withdrawnRewards;
-
-    
-    uint256 public diamondShare;
-    uint256 public goldShare;
-    uint256 public silverShare;
+    mapping(uint256 => uint256) public nftShare;  //2 = diamond, 1 = gold, 0 = silver  
+    uint256 public diamondNfts;
+    uint256 public goldNfts;
+    uint256 public silverNfts;
     constructor(
     //    function(uint256) view returns (uint256) getNFTWeightage_,
         function() view returns (uint256) getTotalWeightage_
@@ -75,20 +75,31 @@ abstract contract AbstractRewards is IAbstractRewards {
         override
         returns (uint256)
     {
-        return
-            ((pointsPerShare * getNFTWeightage(_tokenId)).toInt256() +
+
+            if(_tokenId <= 2000){
+            return ((pointsPerShare * nftShare[2]).toInt256() +
                 pointsCorrection[_tokenId]).toUint256() / POINTS_MULTIPLIER;
+
+            }else if(_tokenId <= 5000){
+            return ((pointsPerShare * nftShare[1]).toInt256() +
+                pointsCorrection[_tokenId]).toUint256() / POINTS_MULTIPLIER;
+
+            }else{
+           return (((pointsPerShare * nftShare[0]).toInt256() +
+                pointsCorrection[_tokenId]).toUint256() / POINTS_MULTIPLIER)/10**18;
+        }
     }
 
 
     
-        function getNFTWeightage(uint256 _tokenId) private view returns(uint256){
+    function getNFTWeightage(uint256 _tokenId) private view returns(uint256){
+
         if(_tokenId <= 2000){
-            return diamondShare;
+            return nftShare[2];
         }else if(_tokenId <= 5000){
-            return goldShare;
+            return nftShare[1];
         }else{
-            return silverShare;
+            return nftShare[0];
         }
     }
 
